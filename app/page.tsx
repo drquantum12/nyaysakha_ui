@@ -1,51 +1,157 @@
-import AcmeLogo from '@/app/ui/acme-logo';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import styles from '@/app/ui/home.module.css';
-import { lusitana } from './ui/fonts';
-import Image from 'next/image';
+"use client";
 
-export default function Page() {
+import { useState, useEffect, useRef, use } from "react";
+import { useRouter } from "next/navigation";
+import Header from "../components/Header";
+import ChatBox from "../components/ChatBox";
+import ChatInput from "../components/ChatInput";
+import Sidebar from "./sidebar/sidebar";
+import { useUser } from '@/context/userContext';
+
+const randomQuestionsAnswers = [
+  { question: "What is your name?", answer: "I am Chat.gov Bot!" },
+  { question: "How are you?", answer: "I am doing great, thank you!" },
+];
+
+export default function Home() {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const { user } = useUser();
+
+  const handleSendMessage = (text: string) => {
+    if (!isChatVisible) {
+      setIsChatVisible(true);
+    }
+
+    setMessages((prevMessages) => [...prevMessages, { sender: "user", text }]);
+
+    const botResponse =
+      randomQuestionsAnswers.find(
+        (qa) => qa.question.toLowerCase() === text.toLowerCase()
+      )?.answer || "I didn’t quite understand that. Could you please rephrase?";
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "bot", text: botResponse },
+    ]);
+  };
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (user) {
+      setLoggedIn(true);
+    }
+  }, [user]);
+
   return (
-    <main className="flex min-h-screen flex-col p-6">
-      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
-        <AcmeLogo />
+    <div className="container">
+      <Header
+        loggedIn={loggedIn}
+        onMenuClick={() => setIsMenuOpen(!isMenuOpen)}
+        onLoginClick={() => router.push("/signin")}
+      />
+      <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+
+      <div className="chat-container">
+        {isChatVisible && <ChatBox messages={messages} chatBoxRef={chatBoxRef} />}
       </div>
-      <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
-        <div className={styles.shape}/>
-          <p className={`text-xl text-gray-800 md:text-3xl md:leading-normal`}>
-            <strong>Welcome to Acme.</strong> This is the example for the{' '}
-            <a href="https://nextjs.org/learn/" className={`text-blue-500 ${lusitana.className} antialiased`}>
-              Next.js Learn Course
-            </a>
-            , brought to you by Vercel.
-          </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+
+      {!isChatVisible || messages.length === 0 ? (
+        <div className="helper-text">
+          Hey! How can I help you today?
         </div>
-        <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-          {/* Add Hero Images Here */}
-          <Image
-            src="/hero-desktop.png"
-            alt="Screenshots of the dashboard project showing desktop version"
-            width={1000}
-            height={760}
-            className='hidden md:block'
-          />
-          <Image
-            src="/hero-mobile.png"
-            alt="Screenshots of the dashboard project showing mobile version"
-            width={560}
-            height={620}
-            className='md:hidden'
-          />
-        </div>
+      ) : null}
+
+      <div className={`chat-input-wrapper ${isChatVisible ? "chat-visible" : ""}`}>
+        <ChatInput onSendMessage={handleSendMessage} />
       </div>
-    </main>
+
+      <style jsx>{`
+        .container {
+          max-width: 600px;
+          width: 90%;
+          margin: 0 auto;
+          padding: 20px;
+          position: relative;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .chat-container {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          gap: 10px;
+          overflow-y: auto;
+          padding-bottom: 70px;
+        }
+
+        .chat-input-wrapper {
+          position: fixed;
+          left: 53%;
+          transform: translateX(-50%);
+          max-width: 800px;
+          width: 90%;
+          display: flex;
+          justify-content: center;
+          transition: top 0.3s ease, bottom 0.3s ease;
+        }
+
+        .chat-input-wrapper:not(.chat-visible) {
+          top: 50%;
+        }
+
+        .chat-visible {
+          bottom: 15px;
+          top: auto;
+        }
+
+        .helper-text {
+          position: fixed;
+          bottom: 55%;
+          left: 52%;
+          width: 90%;
+          transform: translateX(-50%);
+          text-align: center;
+          margin-bottom: 10px;
+          font-size: 24px;
+          color: #333;
+          font-weight: bold;
+          transition: opacity 0.3s ease;
+        }
+
+        .helper-text.hidden {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+          .container {
+            width: 95%;
+            max-width: 100%;
+          }
+          .chat-input-wrapper {
+            width: 95%;
+            left: 50%;
+          }
+          .helper-text {
+            font-size: 20px;
+            left: 50%;
+          }
+        }
+      `}</style>
+    </div>
   );
 }
