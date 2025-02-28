@@ -1,11 +1,29 @@
 import { useEffect, useState } from 'react';
 import { FaCog, FaQuestionCircle, FaUser , FaLockOpen, FaLock } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
+import conversations from '../../utils/chatData';
 
 const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [isPersistent, setIsPersistent] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
+  const [conversations_, setConversations] = useState(conversations);
   const router = useRouter();
+
+  // useEffect(() => {
+  //   const getPastConversations = async () => {
+  //     const response = await fetch('http://127.0.0.1:8000/chat/getConversations/', {
+  //       headers: {
+  //         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+  //       }
+  //     });
+  //     if (response.ok) {
+  //       const messages = await response.json();
+  //       console.log(messages);
+  //     }
+  //   }
+  //   getPastConversations();
+  // }
+  // , []);
 
   useEffect(() => {
     const persistentState = localStorage.getItem('sidebarPersistent');
@@ -46,6 +64,14 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
           </button>
         </div>
         <div className="sidebar-content">
+        {/* past conversations like chatgpt sidebar */}
+        <ul>
+          {conversations_.map((conversation, index) => (
+            <li key={index}>
+             <p>{conversation.topic}</p>
+            </li>
+          ))}
+        </ul>
           <ul>
             <li onClick={() => router.push('/settings')}>
               <FaCog size={17} className="icon" />
