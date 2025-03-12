@@ -1,17 +1,26 @@
 import { FaBars, FaUser } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import { useUser } from '@/context/userContext';
+import { useEffect, useState } from 'react';
 
-const Header = ({ loggedIn, onMenuClick, onLoginClick }: { loggedIn: boolean, onMenuClick: () => void, onLoginClick: () => void }) => {
+const Header = ({onMenuClick, onLoginClick }: {onMenuClick: () => void, onLoginClick: () => void }) => {
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const router = useRouter();
   const {user} = useUser();
-  console.log(user);
+
+  useEffect(() => {
+    if (user) {
+      setLoggedIn(true);
+    }
+  }, [user]);
 
   return (
     <header className="header">
-      <div className="menu-icon" onClick={onMenuClick}>
+      {/* render menu bar if user logged in */}
+      {loggedIn?(<div className="menu-icon" onClick={onMenuClick}>
         <FaBars size={24} />
-      </div>
+      </div>):null}
+
       <div className="app-name" onClick={() => router.push("/")}>
         <h1>Legal Insight</h1>
       </div>

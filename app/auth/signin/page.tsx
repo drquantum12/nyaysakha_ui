@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import Logo from '../../assets/images/logo.png';
+import Logo from '@/assets/images/logo.png';
 import { AiFillEye, AiFillEyeInvisible, AiOutlineClose, AiOutlineMail, AiFillLock } from 'react-icons/ai';
 import { FcGoogle } from "react-icons/fc";
 

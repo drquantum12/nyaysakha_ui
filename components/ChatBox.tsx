@@ -2,8 +2,8 @@ const ChatBox = ({ messages, chatBoxRef }: { messages: any[], chatBoxRef: React.
   return (
     <div ref={chatBoxRef} className="chat-box">
       {messages.map((msg, index) => (
-        <div key={index} className={`message ${msg.sender}`}>
-          <p className="message-text">{msg.text}</p>
+        <div key={index} className={`message ${msg.role}`}>
+          <p className="message-text">{msg.content}</p>
         </div>
       ))}
       
@@ -12,14 +12,13 @@ const ChatBox = ({ messages, chatBoxRef }: { messages: any[], chatBoxRef: React.
           flex-grow: 1;
           width: 100%;
           max-width: 800px;
-          height: calc(200vh - 300px);
+          height: calc(100vh - 300px);
           overflow-y: auto;
           padding: 15px;
           display: flex;
           flex-direction: column;
           gap: 10px;
           border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           margin: 40px auto;
         }
 

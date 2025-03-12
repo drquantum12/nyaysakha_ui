@@ -2,28 +2,45 @@ import { useEffect, useState } from 'react';
 import { FaCog, FaQuestionCircle, FaUser , FaLockOpen, FaLock } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import conversations from '../../utils/chatData';
+import Link from 'next/link';
+import { useUser } from '@/context/userContext';
+
+interface conversations {
+  conversationId: string;
+  topic: string;
+}
 
 const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [isPersistent, setIsPersistent] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
-  const [conversations_, setConversations] = useState(conversations);
+  const [conversations_, setConversations] = useState<conversations[]>([]);
   const router = useRouter();
+  const { user } = useUser();
 
-  // useEffect(() => {
-  //   const getPastConversations = async () => {
-  //     const response = await fetch('http://127.0.0.1:8000/chat/getConversations/', {
-  //       headers: {
-  //         Authorization: `Bearer ${sessionStorage.getItem('token')}`
-  //       }
-  //     });
-  //     if (response.ok) {
-  //       const messages = await response.json();
-  //       console.log(messages);
-  //     }
-  //   }
-  //   getPastConversations();
-  // }
-  // , []);
+  useEffect(() => {
+    const getPastConversations = async () => {
+      const response = await fetch('http://127.0.0.1:8000/chat/getConversations/', {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        },
+        method: 'GET'
+      });
+      if (response.ok) {
+        const messages = await response.json();
+        setConversations(messages["result"]);
+      } else {
+        console.error('Failed to fetch conversations');
+      }
+    }
+    getPastConversations();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setIsLogged(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     const persistentState = localStorage.getItem('sidebarPersistent');
@@ -56,6 +73,8 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
   };
 
   return (
+    // render sidebar only if user is logged in
+    isLogged ? (
     <>
       <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
@@ -67,9 +86,9 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         {/* past conversations like chatgpt sidebar */}
         <ul>
           {conversations_.map((conversation, index) => (
-            <li key={index}>
+            <Link key={index} href={`/c/${conversation.conversationId}`}>
              <p>{conversation.topic}</p>
-            </li>
+            </Link>
           ))}
         </ul>
           <ul>
@@ -199,7 +218,9 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
           }
         }
       `}</style>
-    </>
+    </>)
+    :
+    <></>
   );  
 };
 

@@ -1,12 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, use } from "react";
-import { useRouter } from "next/navigation";
-import Header from "../components/Header";
-import ChatBox from "../components/ChatBox";
 import ChatInput from "../components/ChatInput";
-import Sidebar from "./sidebar/sidebar";
-import { useUser } from '@/context/userContext';
 
 const randomQuestionsAnswers = [
   { question: "What is your name?", answer: "I am Chat.gov Bot!" },
@@ -15,12 +10,8 @@ const randomQuestionsAnswers = [
 
 export default function Home() {
   const [messages, setMessages] = useState<any[]>([]);
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const { user } = useUser();
 
   const handleSendMessage = (text: string) => {
     if (!isChatVisible) {
@@ -46,24 +37,9 @@ export default function Home() {
     }
   }, [messages]);
 
-  useEffect(() => {
-    if (user) {
-      setLoggedIn(true);
-    }
-  }, [user]);
 
   return (
     <div className="container">
-      <Header
-        loggedIn={loggedIn}
-        onMenuClick={() => setIsMenuOpen(!isMenuOpen)}
-        onLoginClick={() => router.push("/signin")}
-      />
-      <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-
-      <div className="chat-container">
-        {isChatVisible && <ChatBox messages={messages} chatBoxRef={chatBoxRef} />}
-      </div>
 
       {!isChatVisible || messages.length === 0 ? (
         <div className="helper-text">
