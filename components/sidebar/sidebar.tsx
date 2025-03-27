@@ -32,13 +32,12 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
       } else {
         console.error('Failed to fetch conversations');
       }
-    }
-    getPastConversations();
-  }, []);
-
-  useEffect(() => {
+    };
     if (user) {
       setIsLogged(true);
+      // fetch conversations if user is logged in
+      getPastConversations();
+
     }
   }, [user]);
 

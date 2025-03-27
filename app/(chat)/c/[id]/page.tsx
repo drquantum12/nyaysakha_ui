@@ -2,14 +2,19 @@
 import { useState, useEffect, useRef, use } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 
 export default function ChatHistory() {
   const id = useParams().id;
   const [messages, setMessages] = useState<any[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
-  
+  const lastActiveRoleRef = useRef<string | null>(null);
+  const isFetched = useRef(false);
+
   useEffect(() => {
+
+    if (isFetched.current) return;
+    isFetched.current = true; // Mark as fetched
 
     const fetchMessages = async () => {
       try {
@@ -20,34 +25,70 @@ export default function ChatHistory() {
           method: 'GET'
         });
         const data = await response.json();
+        lastActiveRoleRef.current = data["messages"][data["messages"].length - 1]["role"];
+        console.log("user role check", lastActiveRoleRef.current === "user");
         setMessages(data["messages"]);
+        if (lastActiveRoleRef.current === "user") {
+          handleSendMessage(data["messages"][data["messages"].length - 1]["content"]);
+          lastActiveRoleRef.current = "bot";
+        }
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
 
     fetchMessages();
-  }, [id]);
+  }, []);
   
   const handleSendMessage = async (text: string) => {
     console.log("Sending message:", text);
+
+    if(lastActiveRoleRef.current === "bot") {
     setMessages((prevMessages) => [...prevMessages, { "content": text, "role": "user" }]);
+    }
+
     const response = await fetch(`http://localhost:8000/chat/${id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         'Content-Type': 'application/json'
       },
       method: 'POST',
-      body: JSON.stringify({ "prompt":text })
+      body: JSON.stringify({ "prompt": text, "lastActiveRole": lastActiveRoleRef.current })
     });
-   if(response.ok){
-     const data = await response.json();
-     console.log("Received response:", data["results"]);
-     setMessages((prevMessages) => [...prevMessages, { "content": data["results"], "role": "bot" }]);
-   }
-   else{
-     console.error("Failed to send message");}
-  };
+    if (!response.body) {
+      throw new Error("Response body is null");
+    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let botResponse = "";
+
+    // Add an empty bot message to start "typing"
+  setMessages((prevMessages) => [...prevMessages, { content: "", role: "bot" }]);
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      botResponse += chunk;
+
+
+      // Typewriter effect: add text character by character
+    setMessages((prevMessages) => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+      if (lastMessage?.role === "bot") {
+        return [
+          ...prevMessages.slice(0, -1),
+          { ...lastMessage, content: botResponse }
+        ];
+      }
+      return prevMessages;
+    });
+
+    // Small delay for the typewriter effect
+    await new Promise((resolve) => setTimeout(resolve, 30));
+  }
+};
 
   return (
     <div className="mt-10">
