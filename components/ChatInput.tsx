@@ -165,18 +165,19 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
         <div className="icon-wrapper" onClick={handleSend} title="Send Message">
               <FaPaperPlane size={20} className="icon" />
             </div>
+            {/*
           {isTyping || attachedFiles.length > 0 ? (
             <div className="icon-wrapper" onClick={handleSend} title="Send Message">
               <FaPaperPlane size={20} className="icon" />
             </div>
           ) : 
           (
-            <></>
-            // <div className="icon-wrapper" onClick={handleVoiceInputClick} title="Voice Input">
-            //   <FaMicrophone size={20} className="icon" style={{ color: isListening ? '#007bff' : 'black' }} />
-            // </div>
+            <div className="icon-wrapper" onClick={handleVoiceInputClick} title="Voice Input">
+              <FaMicrophone size={20} className="icon" style={{ color: isListening ? '#007bff' : 'black' }} />
+            </div>
           )
           }
+          */}
         </div>
       </div>
       <style jsx>{`

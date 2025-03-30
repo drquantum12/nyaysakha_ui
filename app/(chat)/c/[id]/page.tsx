@@ -17,6 +17,7 @@ export default function ChatHistory() {
   const isFetched = useRef(false);
 
   useEffect(() => {
+    console.log(`api url : ${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`);
 
     if (isFetched.current) return;
     isFetched.current = true; // Mark as fetched
@@ -46,13 +47,12 @@ export default function ChatHistory() {
   });
   
   const handleSendMessage = async (text: string) => {
-    console.log("Sending message:", text);
 
     if(lastActiveRoleRef.current === "bot") {
     setMessages((prevMessages) => [...prevMessages, { "content": text, "role": "user" }]);
     }
 
-    const response = await fetch(`${process.env.API_URL}/chat/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         'Content-Type': 'application/json'
