@@ -165,6 +165,11 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
         <div className="icon-wrapper" onClick={handleSend} title="Send Message">
               <FaPaperPlane size={20} className="icon" />
             </div>
+            {isTyping && (
+              <div className="icon-wrapper" title="Typing...">
+                <span>Typing...</span>
+              </div>
+            )}
             {/*
           {isTyping || attachedFiles.length > 0 ? (
             <div className="icon-wrapper" onClick={handleSend} title="Send Message">
