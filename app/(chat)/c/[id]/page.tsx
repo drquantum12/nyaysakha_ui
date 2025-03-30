@@ -17,7 +17,6 @@ export default function ChatHistory() {
   const isFetched = useRef(false);
 
   useEffect(() => {
-    console.log(`api url : ${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`);
 
     if (isFetched.current) return;
     isFetched.current = true; // Mark as fetched
@@ -32,7 +31,6 @@ export default function ChatHistory() {
         });
         const data = await response.json();
         lastActiveRoleRef.current = data["messages"][data["messages"].length - 1]["role"];
-        console.log("user role check", lastActiveRoleRef.current === "user");
         setMessages(data["messages"]);
         if (lastActiveRoleRef.current === "user") {
           handleSendMessage(data["messages"][data["messages"].length - 1]["content"]);
