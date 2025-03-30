@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { AiOutlineClose, AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useRouter } from "next/navigation";
-import Logo from '../../assets/images/logo.png';
+import Logo from '@/assets/images/logo.png';
 import Image from 'next/image';
-import TermsAndConditions from '../../components/TermsAndConditions';
+import TermsAndConditions from '@/components/TermsAndConditions';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');
@@ -25,6 +25,7 @@ const Signup = () => {
     e.preventDefault();
     setError('');
     setMessage('');
+    setPhone('');
 
     if (!firstName || !lastName || !email || !password) {
       setError('All fields are required.');
@@ -37,7 +38,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/signup/?token=jessica', {
+      const response = await fetch(`${process.env.API_URL}/auth/signup/?token=jessica`, {
         method: 'POST',
         body: JSON.stringify({ firstName, lastName, email, phone, password }),
         headers: { 

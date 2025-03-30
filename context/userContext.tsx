@@ -1,5 +1,6 @@
 'use client';
 import React, {createContext, useContext, useState, useEffect} from 'react';
+import { useRouter } from 'next/navigation';
 
 interface User {
     id: number;
@@ -10,6 +11,7 @@ interface User {
 interface UserContextType {
     user: User | null;
     setUser : React.Dispatch<React.SetStateAction<User | null>>;
+    refreshUser: () => void;
 }
 
 interface UserProviderProps {
@@ -20,25 +22,33 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
     const [user, setUser] = useState<User | null>(null);
+    const Router = useRouter();
+
+    const fetchUser = async () => {
+        const token = sessionStorage.getItem('token');
+        if (!token){
+            Router.push('/auth/signin');
+            return;
+        }
+
+        const response = await fetch(`${process.env.API_URL}/auth/user/`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }});
+        if (response.ok) {
+            const data = await response.json();
+            setUser(data);
+        }
+        else{
+            Router.push('/auth/signin');
+        }
+    };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const token = sessionStorage.getItem('token');
-            if (!token) return;
-
-            const response = await fetch('http://127.0.0.1:8000/auth/user/', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }});
-            if (response.ok) {
-                const data = await response.json();
-                setUser(data);
-            }
-        };
         fetchUser();
     }, []);
     return (
-        <UserContext.Provider value={{user, setUser}}>
+        <UserContext.Provider value={{user, setUser, refreshUser: fetchUser}}>
             {children}
         </UserContext.Provider>
     );

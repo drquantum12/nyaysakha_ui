@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Logo from '@/assets/images/logo.png';
 import { AiFillEye, AiFillEyeInvisible, AiOutlineClose, AiOutlineMail, AiFillLock } from 'react-icons/ai';
 import { FcGoogle } from "react-icons/fc";
+import { useUser } from '@/context/userContext';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ const Signin = () => {
   const [passwordError, setPasswordError] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+  const {refreshUser} = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ const Signin = () => {
       return;
     }
     try{
-      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
+      const response = await fetch(`${process.env.API_URL}/auth/login/`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 
@@ -49,9 +51,12 @@ const Signin = () => {
       console.log(data.msg);
       sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('user_id', data.user_id);
+      refreshUser();
       router.push("/");
     } catch (error) {
+      console.error('Error during sign-in:', error);
       setEmailError('An error occurred. Please try again.');
+      setPasswordError('');
     }
   };
 

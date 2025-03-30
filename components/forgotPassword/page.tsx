@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useRouter } from "next/navigation";
-import Logo from '../../assets/images/logo.png';
+import Logo from '@/assets/images/logo.png';
 import Image from 'next/image';
 
 const ForgotPassword = () => {

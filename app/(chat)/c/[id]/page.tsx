@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
-import { redirect, useParams } from "next/navigation";
+import {useParams } from "next/navigation";
 
 export default function ChatHistory() {
   const id = useParams().id;
@@ -18,7 +18,7 @@ export default function ChatHistory() {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/chat/getConversation/${id}`, {
+        const response = await fetch(`${process.env.API_URL}/chat/getConversation/${id}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           },
@@ -47,7 +47,7 @@ export default function ChatHistory() {
     setMessages((prevMessages) => [...prevMessages, { "content": text, "role": "user" }]);
     }
 
-    const response = await fetch(`http://localhost:8000/chat/${id}`, {
+    const response = await fetch(`${process.env.API_URL}/chat/${id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         'Content-Type': 'application/json'

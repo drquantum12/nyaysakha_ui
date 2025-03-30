@@ -4,30 +4,25 @@ import { useUser } from '@/context/userContext';
 import { useEffect, useState } from 'react';
 
 const Header = ({onMenuClick, onLoginClick }: {onMenuClick: () => void, onLoginClick: () => void }) => {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const router = useRouter();
   const {user} = useUser();
 
-  useEffect(() => {
-    if (user) {
-      setLoggedIn(true);
-    }
-  }, [user]);
+  
 
   return (
     <header className="header">
       {/* render menu bar if user logged in */}
-      {loggedIn?(<div className="menu-icon" onClick={onMenuClick}>
+      {user?(<div className="menu-icon" onClick={onMenuClick}>
         <FaBars size={24} />
       </div>):null}
 
       <div className="app-name" onClick={() => router.push("/")}>
-        <h1>Legal Insight</h1>
+        <h1>NyaySakha</h1>
       </div>
       <div className="login">
-        {loggedIn ? (
+        {user ? (
           // <FaUser size={24} />
-          <p>{user ? user.firstName:'Guest'}</p>
+          <p>{user.firstName}</p>
         ) : (
           <button className="login-btn" onClick={onLoginClick}>
             Login

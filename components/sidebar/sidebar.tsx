@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaCog, FaQuestionCircle, FaUser , FaLockOpen, FaLock } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
-import conversations from '../../utils/chatData';
+import conversations from '@/utils/chatData';
 import Link from 'next/link';
 import { useUser } from '@/context/userContext';
 
