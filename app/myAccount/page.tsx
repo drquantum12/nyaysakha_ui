@@ -41,7 +41,7 @@ const MyAccountPage = () => {
           <h2>Account Settings</h2>
           <p>Manage your account settings and preferences:</p>
           <div className="setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Profile Icon"
               className="icon"
@@ -52,7 +52,7 @@ const MyAccountPage = () => {
             </div>
           </div>
           <div className="setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Security Icon"
               className="icon"
@@ -63,7 +63,7 @@ const MyAccountPage = () => {
             </div>
           </div>
           <div className="setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Notification Icon"
               className="icon"

@@ -26,7 +26,7 @@ const LargeContentPage = () => {
             We are dedicated to providing a seamless chat experience powered by
             artificial intelligence.
           </p>
-          <img
+          <Image
             src="https://via.placeholder.com/800x400"
             alt="AI Chat"
             className="main-image"
@@ -40,7 +40,7 @@ const LargeContentPage = () => {
             Our mission is to enhance communication through innovative AI
             solutions that cater to user needs.
           </p>
-          <img
+          <Image
             src="https://via.placeholder.com/800x400"
             alt="Mission"
             className="main-image"

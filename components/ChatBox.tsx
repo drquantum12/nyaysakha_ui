@@ -1,4 +1,9 @@
-const ChatBox = ({ messages, chatBoxRef }: { messages: any[], chatBoxRef: React.RefObject<HTMLDivElement|null> }) => {
+interface Message {
+  content: string;
+  role: string;
+}
+
+const ChatBox = ({ messages, chatBoxRef }: { messages: Message[], chatBoxRef: React.RefObject<HTMLDivElement|null> }) => {
   return (
     <div ref={chatBoxRef} className="chat-box">
       {messages.map((msg, index) => (

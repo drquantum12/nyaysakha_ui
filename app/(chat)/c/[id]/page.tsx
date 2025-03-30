@@ -4,9 +4,14 @@ import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
 import {useParams } from "next/navigation";
 
+interface Message {
+  content: string;
+  role: string;
+}
+
 export default function ChatHistory() {
   const id = useParams().id;
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const lastActiveRoleRef = useRef<string | null>(null);
   const isFetched = useRef(false);
@@ -38,7 +43,7 @@ export default function ChatHistory() {
     };
 
     fetchMessages();
-  }, []);
+  });
   
   const handleSendMessage = async (text: string) => {
     console.log("Sending message:", text);

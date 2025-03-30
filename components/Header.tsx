@@ -1,7 +1,7 @@
-import { FaBars, FaUser } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import { useUser } from '@/context/userContext';
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
 const Header = ({onMenuClick, onLoginClick }: {onMenuClick: () => void, onLoginClick: () => void }) => {
   const router = useRouter();

@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { FaMicrophone, FaPaperPlane, FaPaperclip, FaSearch, FaTimes } from 'react-icons/fa';
+
+
+import { FaPaperPlane, FaPaperclip, FaSearch, FaTimes } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void }) => {
@@ -8,8 +10,8 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
-  const [isListening, setIsListening] = useState<boolean>(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // const [isListening, setIsListening] = useState<boolean>(false);
+  // const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [hasText, setHasText] = useState<boolean>(false);
 
   useEffect(() => {
@@ -24,30 +26,30 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
     }
   }, [message, attachedFiles]);
 
-  useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      recognitionRef.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognitionRef.current.interimResults = true; // Enable interim results
-      recognitionRef.current.lang = 'en-US';
+  // useEffect(() => {
+  //   if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+  //     recognitionRef.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  //     recognitionRef.current.interimResults = true; // Enable interim results
+  //     recognitionRef.current.lang = 'en-US';
 
-      recognitionRef.current.onresult = (event) => {
-        const transcript = Array.from(event.results)
-          .map(result => result[0].transcript)
-          .join('');
+  //     recognitionRef.current.onresult = (event) => {
+  //       const transcript = Array.from(event.results)
+  //         .map(result => result[0].transcript)
+  //         .join('');
         
-        // Update the message state with the transcript
-        setMessage(transcript);
-        setHasText(transcript.trim() !== '');
-      };
+  //       // Update the message state with the transcript
+  //       setMessage(transcript);
+  //       setHasText(transcript.trim() !== '');
+  //     };
 
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-    } else {
-      console.error('Speech Recognition not supported in this browser.');
-      alert('Speech Recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.');
-    }
-  }, []);
+  //     recognitionRef.current.onend = () => {
+  //       setIsListening(false);
+  //     };
+  //   } else {
+  //     console.error('Speech Recognition not supported in this browser.');
+  //     alert('Speech Recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.');
+  //   }
+  // }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -57,15 +59,16 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
 
   const handleSend = () => {
     if (message.trim() || attachedFiles.length > 0) {
-      onSendMessage(message, attachedFiles);
+      // onSendMessage(message, attachedFiles);
+      onSendMessage(message);
       setMessage('');
       setAttachedFiles([]);
       setIsTyping(false);
       setHasText(false);
-      if (isListening) {
-        recognitionRef.current?.stop();
-        recognitionRef.current?.start();
-      }
+      // if (isListening) {
+      //   recognitionRef.current?.stop();
+      //   recognitionRef.current?.start();
+      // }
     }
   };
 
@@ -105,23 +108,23 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
     router.push('https://www.google.com');
   };
 
-  const handleVoiceInputClick = () => {
-    if (recognitionRef.current) {
-      if (isListening) {
-        recognitionRef.current.stop();
-      } else {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-          .then(() => {
-            recognitionRef.current.start();
-            setIsListening(true);
-          })
-          .catch((err) => {
-            console.error('Microphone permission denied:', err);
-            alert('Microphone access is required for voice input. Please allow microphone access in your browser settings.');
-          });
-      }
-    }
-  };
+  // const handleVoiceInputClick = () => {
+  //   if (recognitionRef.current) {
+  //     if (isListening) {
+  //       recognitionRef.current.stop();
+  //     } else {
+  //       navigator.mediaDevices.getUserMedia({ audio: true })
+  //         .then(() => {
+  //           recognitionRef.current.start();
+  //           setIsListening(true);
+  //         })
+  //         .catch((err) => {
+  //           console.error('Microphone permission denied:', err);
+  //           alert('Microphone access is required for voice input. Please allow microphone access in your browser settings.');
+  //         });
+  //     }
+  //   }
+  // };
 
   return (
     <div className={`chat-input-container ${hasText ? 'has-text' : ''}`}>
@@ -159,15 +162,21 @@ const ChatInput = ({ onSendMessage }: { onSendMessage: (text: string) => void })
           </div>
         </div>
         <div className="right-icons">
+        <div className="icon-wrapper" onClick={handleSend} title="Send Message">
+              <FaPaperPlane size={20} className="icon" />
+            </div>
           {isTyping || attachedFiles.length > 0 ? (
             <div className="icon-wrapper" onClick={handleSend} title="Send Message">
               <FaPaperPlane size={20} className="icon" />
             </div>
-          ) : (
-            <div className="icon-wrapper" onClick={handleVoiceInputClick} title="Voice Input">
-              <FaMicrophone size={20} className="icon" style={{ color: isListening ? '#007bff' : 'black' }} />
-            </div>
-          )}
+          ) : 
+          (
+            <></>
+            // <div className="icon-wrapper" onClick={handleVoiceInputClick} title="Voice Input">
+            //   <FaMicrophone size={20} className="icon" style={{ color: isListening ? '#007bff' : 'black' }} />
+            // </div>
+          )
+          }
         </div>
       </div>
       <style jsx>{`

@@ -31,6 +31,7 @@ const ForgotPassword = () => {
       });
       setMessage('Password recovery email sent successfully! Please check your inbox.');
     } catch (err) {
+      console.error('Error sending recovery email:', err);
       setError('Failed to send recovery email. Please try again.');
     }
   };

@@ -57,6 +57,7 @@ const Signup = () => {
       sessionStorage.setItem('user_id', data.user_id);
       router.push("/");
     } catch (err) {
+      console.error('Error during sign-up:', err);
       setError('Failed to sign up. Please try again.');
     }
   };

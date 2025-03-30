@@ -73,7 +73,7 @@ const Signin = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <AiOutlineClose size={20} title=''/>
+          <AiOutlineClose size={20} title='' />
         </span>
         <div className="logo-container" onClick={() => router.push("/")}>
           <Image 
@@ -120,7 +120,7 @@ const Signin = () => {
           <button type="submit" className="login-button">Log In</button>
         </form>
         <div className="signup-text">
-          <span>Don't have an account? </span>
+          <span>Don&apos;t have an account? </span>
           <span 
             className="footer-link signup-link" 
             onClick={() => router.push("/signup")}

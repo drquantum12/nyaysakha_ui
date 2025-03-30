@@ -36,7 +36,7 @@ const HelpPage = () => {
               <a href="/tutorials">User Tutorials</a>
             </li>
           </ul>
-          <img
+          <Image
             src="https://via.placeholder.com/800x400"
             alt="Help Resources"
             className="main-image"
@@ -53,7 +53,7 @@ const HelpPage = () => {
             <input type="email" placeholder="Enter your email" required />
             <button type="submit">Subscribe</button>
           </form>
-          <img
+          <Image
             src="https://via.placeholder.com/800x400"
             alt="Subscribe"
             className="main-image"

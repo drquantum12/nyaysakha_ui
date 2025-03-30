@@ -1,14 +1,18 @@
 "use client";
-import { useState, useEffect, useRef, use } from "react";
+import { useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
-import { useParams, useRouter } from "next/navigation";
+import {useRouter } from "next/navigation";
+
+interface Message {
+  content: string;
+  role: string;
+}
 
 export default function ChatHistory() {
-  const id = useParams().id;
-  const [messages, setMessages] = useState<any[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const messages: Message[] = [];
   
 
   const handleSendMessage = async (text: string) => {

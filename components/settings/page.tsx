@@ -57,7 +57,7 @@ const SettingsPage = () => {
           <h2>Advanced Settings</h2>
           <p>Explore additional settings to enhance your experience:</p>
           <div className="advanced-setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Icon"
               className="icon"
@@ -68,7 +68,7 @@ const SettingsPage = () => {
             </div>
           </div>
           <div className="advanced-setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Icon"
               className="icon"
@@ -79,7 +79,7 @@ const SettingsPage = () => {
             </div>
           </div>
           <div className="advanced-setting-item">
-            <img
+            <Image
               src="https://via.placeholder.com/50"
               alt="Icon"
               className="icon"
