@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
 
   useEffect(() => {
     const getPastConversations = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversations/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversations`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('token')}`
         },
