@@ -38,7 +38,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.API_URL}/auth/signup/?token=jessica`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup/?token=jessica`, {
         method: 'POST',
         body: JSON.stringify({ firstName, lastName, email, phone, password }),
         headers: { 

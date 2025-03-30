@@ -23,7 +23,7 @@ export default function ChatHistory() {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch(`${process.env.API_URL}/chat/getConversation/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversation/${id}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           },

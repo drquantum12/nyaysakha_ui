@@ -17,7 +17,7 @@ export default function ChatHistory() {
 
   const handleSendMessage = async (text: string) => {
     console.log("Sending message:", text);
-    const response = await fetch(`${process.env.API_URL}/chat/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         'Content-Type': 'application/json'

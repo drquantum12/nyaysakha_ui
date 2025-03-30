@@ -31,7 +31,7 @@ export function UserProvider({ children }: UserProviderProps) {
             return;
         }
 
-        const response = await fetch(`${process.env.API_URL}/auth/user/`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/user/`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }});
