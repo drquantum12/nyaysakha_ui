@@ -2,11 +2,12 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/context/userContext";
+import { AuthProvider } from "@/context/userContext";
 import Header from "@/components/Header";
 import Sidebar from "@/components/sidebar/sidebar";
 import { useState} from "react";
 import { useRouter } from "next/navigation";
+// import { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,8 +20,11 @@ const geistMono = Geist_Mono({
 });
 
 // export const metadata: Metadata = {
-//   title: "Legal Insight",
-//   description: "Explore the latest government policies and their implications on legal practices. Gain insights into how these regulations affect businesses and individuals, ensuring you stay informed and compliant.",
+//   title: "Neurosattva",
+//   description: "Neurosattva - Your AI Assistant",
+//   icons: {
+//     icon: "/favicon.png",
+//   },
 // };
 
 export default function RootLayout({
@@ -37,7 +41,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider>
+        <AuthProvider>
           <div className="container">
           <Header
         onMenuClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -48,7 +52,7 @@ export default function RootLayout({
 
             {children}
           </div>
-        </UserProvider>
+        </AuthProvider>
         <style jsx>{`
         .container {
           max-width: 600px;

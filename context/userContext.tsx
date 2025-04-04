@@ -1,63 +1,42 @@
 'use client';
 import React, {createContext, useContext, useState, useEffect} from 'react';
-import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
-interface User {
-    id: number;
-    firstName: string;
-    email: string;
-}
 
-interface UserContextType {
+
+interface AuthContextType {
     user: User | null;
-    setUser : React.Dispatch<React.SetStateAction<User | null>>;
-    refreshUser: () => void;
+    loading: boolean;
 }
 
-interface UserProviderProps {
-    children: React.ReactNode;
-}
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export function UserProvider({ children }: UserProviderProps) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const Router = useRouter();
-
-    const fetchUser = async () => {
-        const token = sessionStorage.getItem('token');
-        if (!token){
-            Router.push('/auth/signin');
-            return;
-        }
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/user/`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }});
-        if (response.ok) {
-            const data = await response.json();
-            setUser(data);
-        }
-        else{
-            Router.push('/auth/signin');
-        }
-    };
+    const [loading, setLoading] = useState(true);
+    
 
     useEffect(() => {
-        fetchUser();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, []);
+
     return (
-        <UserContext.Provider value={{user, setUser, refreshUser: fetchUser}}>
+        <AuthContext.Provider value={{ user, loading }}>
             {children}
-        </UserContext.Provider>
+        </AuthContext.Provider>
     );
 }
 
-export function useUser(){
-    const context = useContext(UserContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useUser must be used within a UserProvider');
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 }

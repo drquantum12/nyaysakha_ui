@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Logo from '@/assets/images/logo.png';
 import { AiFillEye, AiFillEyeInvisible, AiOutlineClose, AiOutlineMail, AiFillLock } from 'react-icons/ai';
 import { FcGoogle } from "react-icons/fc";
-import { useUser } from '@/context/userContext';
+import { auth, getFirebaseToken, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from '@/lib/firebase';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
@@ -16,7 +16,6 @@ const Signin = () => {
   const [passwordError, setPasswordError] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
-  const {refreshUser} = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,33 +34,61 @@ const Signin = () => {
       return;
     }
     try{
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login/`, {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        setEmailError(errorData.message || 'Failed to sign in. Please try again.');
-        return;
-      }
-      const data = await response.json();
-      console.log(data.msg);
-      sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('user_id', data.user_id);
-      refreshUser();
-      router.push("/");
+      signInWithEmailAndPassword(auth, email, password)
+      .then(async () => {
+        const token = await getFirebaseToken();
+        if (token) {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login/`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+          });
+          if(response.ok){
+            const data = await response.json();
+            console.log(data);
+            router.push("/");
+          }
+          else{
+            setEmailError('Failed to sign in. Please check your credentials.');
+          }
+        }
+      })
     } catch (error) {
-      console.error('Error during sign-in:', error);
       setEmailError('An error occurred. Please try again.');
       setPasswordError('');
     }
   };
 
-  const handleGoogleSignIn = () => {
-    alert('Google sign-in not added.');
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const token = await result.user.getIdToken();
+        if (token) {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google-signin/`, {
+            method: 'GET',
+            headers: {
+  
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            router.push("/");
+          } else {
+            setEmailError('Failed to sign in with Google. Please try again.');
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error signing in with Google:', error);
+        setEmailError('An error occurred. Please try again.');
+      }
+      );
   };
 
   return (
@@ -78,7 +105,7 @@ const Signin = () => {
         <div className="logo-container" onClick={() => router.push("/")}>
           <Image 
             src={Logo}
-            alt="Legal Insight Logo" 
+            alt="Neurosattva Logo" 
             className="logo" 
             width={150}
             height={50}
@@ -123,7 +150,7 @@ const Signin = () => {
           <span>Don&apos;t have an account? </span>
           <span 
             className="footer-link signup-link" 
-            onClick={() => router.push("/signup")}
+            onClick={() => router.push("/auth/signup")}
           >
             Sign up
           </span>
@@ -136,7 +163,7 @@ const Signin = () => {
 
         <button className="google-button" onClick={handleGoogleSignIn}>
           <FcGoogle size={20} style={{ marginRight: '8px' }} />
-          <span>Log in with Google</span>
+          <span>Sign in with Google</span>
         </button>
       </div>
 
@@ -146,12 +173,14 @@ const Signin = () => {
           justify-content: center;
           align-items: center;
           height: 100vh;
-          background-color: #f0f0f0;
+          z-index: 1000;
         }
 
         .login-container {
           background-color: white;
           padding: 20px;
+          margin-top: 15vh;
+          margin-bottom: 15vh;
           border-radius: 10px;
           max-width: 480px;
           width: 100%;

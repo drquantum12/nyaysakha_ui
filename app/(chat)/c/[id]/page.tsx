@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
 import {useParams } from "next/navigation";
+import { auth } from "@/lib/firebase";
 
 interface Message {
   content: string;
@@ -23,9 +24,12 @@ export default function ChatHistory() {
 
     const fetchMessages = async () => {
       try {
+        const token = await auth.currentUser?.getIdToken();
+        
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversation/${id}`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
           method: 'GET'
         });
@@ -43,6 +47,12 @@ export default function ChatHistory() {
 
     fetchMessages();
   });
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
   
   const handleSendMessage = async (text: string) => {
 
@@ -50,9 +60,10 @@ export default function ChatHistory() {
     setMessages((prevMessages) => [...prevMessages, { "content": text, "role": "user" }]);
     }
 
+    const token = await auth.currentUser?.getIdToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       method: 'POST',

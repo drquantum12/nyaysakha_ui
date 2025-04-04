@@ -47,47 +47,6 @@ const LargeContentPage = () => {
           />
         </div>
       </section>
-      <style jsx>{`
-        .scroll-container {
-          scroll-snap-type: y mandatory;
-          overflow-y: scroll;
-          height: 100vh;
-        }
-        .logo-container {
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          cursor: pointer;
-        }
-        .page {
-          scroll-snap-align: start;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background-color: #f0f0f0;
-          padding: 20px;
-        }
-        .content {
-          text-align: center;
-          max-width: 800px;
-        }
-        .main-image {
-          width: 100%;
-          height: auto;
-          border-radius: 10px;
-          margin-top: 20px;
-        }
-        h1,
-        h2 {
-          color: #333;
-        }
-        p {
-          color: #666;
-          font-size: 1.2em;
-        }
-      `}</style>
     </div>
   );
 };

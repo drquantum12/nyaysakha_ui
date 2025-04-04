@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FaCog, FaQuestionCircle, FaUser , FaLockOpen, FaLock } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
-import conversations from '@/utils/chatData';
 import Link from 'next/link';
-import { useUser } from '@/context/userContext';
+import { useAuth } from '@/context/userContext';
+import { auth } from '@/lib/firebase';
 
 interface conversations {
   conversationId: string;
@@ -12,31 +12,28 @@ interface conversations {
 
 const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [isPersistent, setIsPersistent] = useState(false);
-  const [isLogged, setIsLogged] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
   const [conversations_, setConversations] = useState<conversations[]>([]);
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const getPastConversations = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversations`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`
-        },
-        method: 'GET'
-      });
-      if (response.ok) {
-        const messages = await response.json();
-        setConversations(messages["result"]);
-      } else {
-        console.error('Failed to fetch conversations');
-      }
-    };
     if (user) {
-      setIsLogged(true);
       // fetch conversations if user is logged in
-      getPastConversations();
+      const fetchConversations = async () => {
+        const token = await auth.currentUser?.getIdToken();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversations`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          method: 'GET'
+        });
+        if (response.ok) {
+          const messages = await response.json();
+          setConversations(messages["result"]);
+        }
+      };
+      fetchConversations();
 
     }
   }, [user]);
@@ -73,7 +70,6 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
 
   return (
     // render sidebar only if user is logged in
-    isLogged ? (
     <>
       <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
@@ -217,9 +213,7 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
           }
         }
       `}</style>
-    </>)
-    :
-    <></>
+    </>
   );  
 };
 

@@ -3,6 +3,7 @@ import { useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
 import {useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
 
 interface Message {
   content: string;
@@ -16,10 +17,10 @@ export default function ChatHistory() {
   
 
   const handleSendMessage = async (text: string) => {
-    console.log("Sending message:", text);
+    const token = await auth.currentUser?.getIdToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/`, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       method: 'POST',
