@@ -46,8 +46,7 @@ const Signin = () => {
             },
           });
           if(response.ok){
-            const data = await response.json();
-            console.log(data);
+            sessionStorage.setItem("token", token);
             router.push("/");
           }
           else{
@@ -56,6 +55,7 @@ const Signin = () => {
         }
       })
     } catch (error) {
+      console.error('Error signing in:', error);
       setEmailError('An error occurred. Please try again.');
       setPasswordError('');
     }
@@ -76,8 +76,7 @@ const Signin = () => {
             },
           });
           if (response.ok) {
-            const data = await response.json();
-            console.log(data);
+            sessionStorage.setItem("token", token);
             router.push("/");
           } else {
             setEmailError('Failed to sign in with Google. Please try again.');

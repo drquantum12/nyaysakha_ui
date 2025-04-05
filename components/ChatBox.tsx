@@ -38,8 +38,8 @@ const ChatBox = ({ messages, chatBoxRef }: { messages: Message[], chatBoxRef: Re
         }
 
         .message.user {
-          background-color: #007bff;
-          color: white;
+          background-color: #edeceb;
+          color: black;
           margin-left: auto;
           text-align: right;
           border-top-right-radius: 2px;
@@ -48,8 +48,6 @@ const ChatBox = ({ messages, chatBoxRef }: { messages: Message[], chatBoxRef: Re
         .message.bot {
           background-color: #ffffff;
           color: #333;
-          border: 1px solid #dcdcdc;
-          border-top-left-radius: 2px;
         }
 
         .message-text {

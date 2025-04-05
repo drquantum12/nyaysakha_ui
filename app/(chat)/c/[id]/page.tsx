@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import ChatInput from "@/components/ChatInput";
 import {useParams } from "next/navigation";
-import { auth } from "@/lib/firebase";
 
 interface Message {
   content: string;
@@ -24,12 +23,9 @@ export default function ChatHistory() {
 
     const fetchMessages = async () => {
       try {
-        const token = await auth.currentUser?.getIdToken();
-        
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversation/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
           },
           method: 'GET'
         });
@@ -54,17 +50,17 @@ export default function ChatHistory() {
     }
   }, [messages]);
   
-  const handleSendMessage = async (text: string) => {
+  const handleSendMessage =  async (text: string) => {
 
     if(lastActiveRoleRef.current === "bot") {
     setMessages((prevMessages) => [...prevMessages, { "content": text, "role": "user" }]);
     }
 
-    const token = await auth.currentUser?.getIdToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
       method: 'POST',
       body: JSON.stringify({ "prompt": text, "lastActiveRole": lastActiveRoleRef.current })

@@ -3,7 +3,6 @@ import { FaCog, FaQuestionCircle, FaUser , FaLockOpen, FaLock } from 'react-icon
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
 import { useAuth } from '@/context/userContext';
-import { auth } from '@/lib/firebase';
 
 interface conversations {
   conversationId: string;
@@ -21,10 +20,9 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
     if (user) {
       // fetch conversations if user is logged in
       const fetchConversations = async () => {
-        const token = await auth.currentUser?.getIdToken();
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/getConversations`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
           },
           method: 'GET'
         });

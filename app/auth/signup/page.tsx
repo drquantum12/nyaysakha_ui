@@ -28,11 +28,6 @@ const Signup = () => {
     try{
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("userCredential", userCredential);
-      console.log({
-        "username" : userName,
-        "email" : userCredential.user.email
-      })
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup/`,{
         method : "POST",
         headers: {
@@ -47,12 +42,17 @@ const Signup = () => {
 
       if(response.ok){
         const data = await response.json();
+        const token = await getFirebaseToken();
+        if(token){
+          sessionStorage.setItem("token", token);
+        }
         console.log("sign with email", data)
       }
       setMessage('User created successfully!');
       router.push('/');
     }
     catch(error) {
+      console.error("Error creating user:", error);
       setError('Failed to create an account. Please try again.');
     }
 
@@ -75,6 +75,7 @@ const Signup = () => {
             });
             if(response.ok){
               const data = await response.json();
+              sessionStorage.setItem("token", token);
               console.log("sign with google", data)
               router.push('/');
             }
