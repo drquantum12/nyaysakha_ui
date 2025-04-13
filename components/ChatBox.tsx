@@ -1,3 +1,8 @@
+import Markdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+
+
 interface Message {
   content: string;
   role: string;
@@ -8,7 +13,9 @@ const ChatBox = ({ messages, chatBoxRef }: { messages: Message[], chatBoxRef: Re
     <div ref={chatBoxRef} className="chat-box">
       {messages.map((msg, index) => (
         <div key={index} className={`message ${msg.role}`}>
-          <p className="message-text">{msg.content}</p>
+          <div className="message-text">
+            <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{msg.content}</Markdown>
+          </div>
         </div>
       ))}
       
